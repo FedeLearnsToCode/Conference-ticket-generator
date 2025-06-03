@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Create your own custom conference ticket by entering attendee details and selecting ticket options."
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/images/favicon-32x32.png"
+    />
+    <!-- Inconsolata Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Conference ticket generator | Frontend Mentor</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="assets/images/logo-full.svg" alt="Logo" />
+      </header>
+      <!-- INPUT FORM SECTION -->
+      <section class="input-form-section">
+        <h1>Your Journey to Coding Conf 2025 Starts Here!</h1>
+        <h2>Secure your spot at next year's biggest coding conference.</h2>
+        <form action="#" method="POST" id="ticket-form">
+          <!-- Upload Input -->
+          <div id="upload-wrapper">
+            <label for="file-upload">Upload Avatar</label>
+            <div
+              class="upload-wrapper"
+              tabindex="0"
+              role="button"
+              aria-label="Upload file"
+            >
+              <div class="upload-img-wrapper">
+                <img
+                  src="assets/images/icon-upload.svg"
+                  alt="Upload your avatar"
+                  id="custom-upload"
+                  class="custom-upload"
+                />
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                id="file-upload"
+                name="file-upload"
+              />
+              <p>Drag and drop or click to upload</p>
+            </div>
+          </div>
+          <!-- Avatar wrapper -->
+          <div id="uploaded-wrapper" class="hide">
+            <h2 class="fake-label" aria-hidden="true">Upload Avatar</h2>
+            <div class="upload-wrapper no-hover" aria-label="Uploaded file">
+              <div class="upload-img-wrapper">
+                <img
+                  src="assets/images/image-avatar.jpg"
+                  alt="Upload your avatar"
+                  id="avatar-uploaded"
+                  class="custom-upload avatar"
+                />
+              </div>
+              <div class="upload-btn-wrapper">
+                <button
+                  id="remove-img-btn"
+                  type="button"
+                  aria-label="Remove image"
+                >
+                  Remove image
+                </button>
+                <button
+                  id="change-img-btn"
+                  type="button"
+                  aria-label="Change image"
+                >
+                  Change image
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="info" id="upload-info-msg">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 16 16"
+            >
+              <path
+                stroke="#D1D0D5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2 8a6 6 0 1 0 12 0A6 6 0 0 0 2 8Z"
+              />
+              <path fill="#D1D0D5" d="M8.004 10.462V7.596ZM8 5.57v-.042Z" />
+              <path
+                stroke="#D1D0D5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.004 10.462V7.596M8 5.569v-.042"
+              />
+            </svg>
+            <p>Upload your photo (JPG or PNG, max size: 500KB).</p>
+          </div>
+          <div
+            class="info error hide"
+            id="upload-error-msg"
+            role="alert"
+            aria-live="assertive"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 16 16"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2 8a6 6 0 1 0 12 0A6 6 0 0 0 2 8Z"
+              />
+              <path fill="#D1D0D5" d="M8.004 10.462V7.596ZM8 5.57v-.042Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.004 10.462V7.596M8 5.569v-.042"
+              />
+            </svg>
+            <p id="error-msg">
+              File too large. Please upload a photo under 500KB.
+            </p>
+          </div>
+          <!-- Name Input -->
+          <label for="name">Full Name</label>
+          <input type="text" id="name" class="text-input" />
+          <div
+            class="info error hide"
+            id="name-error-msg"
+            role="alert"
+            aria-live="assertive"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 16 16"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2 8a6 6 0 1 0 12 0A6 6 0 0 0 2 8Z"
+              />
+              <path fill="#D1D0D5" d="M8.004 10.462V7.596ZM8 5.57v-.042Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.004 10.462V7.596M8 5.569v-.042"
+              />
+            </svg>
+            <p>Enter your first and last name.</p>
+          </div>
+          <!-- Email Input -->
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            class="text-input"
+            placeholder="example@email.com"
+          />
+          <div
+            class="info error hide"
+            id="email-error-msg"
+            role="alert"
+            aria-live="assertive"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 16 16"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2 8a6 6 0 1 0 12 0A6 6 0 0 0 2 8Z"
+              />
+              <path fill="#D1D0D5" d="M8.004 10.462V7.596ZM8 5.57v-.042Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.004 10.462V7.596M8 5.569v-.042"
+              />
+            </svg>
+            <p>Please enter a valid email address.</p>
+          </div>
+          <!-- GitHub Input -->
+          <label for="github-username">GitHub Username</label>
+          <input
+            type="text"
+            id="github-username"
+            class="text-input"
+            placeholder="@yourusername"
+          />
+          <div
+            class="info error hide"
+            id="github-error-msg"
+            role="alert"
+            aria-live="assertive"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 16 16"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2 8a6 6 0 1 0 12 0A6 6 0 0 0 2 8Z"
+              />
+              <path fill="#D1D0D5" d="M8.004 10.462V7.596ZM8 5.57v-.042Z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.004 10.462V7.596M8 5.569v-.042"
+              />
+            </svg>
+            <p>GitHub username must start with the @ symbol.</p>
+          </div>
+
+          <button
+            type="submit"
+            id="generate-ticket-btn"
+            aria-label="Generate my ticket"
+          >
+            Generate My Ticket
+          </button>
+        </form>
+      </section>
+
+      <!-- COMPLETED TICKET SECTION -->
+      <section class="completed-ticket-section hide">
+        <h2>
+          Congrats, <span class="print-name1">Jonatan</span>&nbsp<span
+            class="print-name2"
+            >Kristof</span
+          >! Your ticket is ready.
+        </h2>
+        <p class="desktop-size">
+          We've emailed your ticket to
+          <span class="print-email">jonatan@email.com</span> and will send
+          updates in the run up to the event.
+        </p>
+        <div class="ticket">
+          <div class="ticket__data">
+            <div class="conf-data">
+              <img src="assets/images/logo-mark.svg" alt="Logo" />
+              <div class="conf-info">
+                <h3>Coding Conf</h3>
+                <p>Jan 31, 2025 / Austin, TX</p>
+              </div>
+            </div>
+            <div class="user-data ticket-reveal">
+              <img src="assets/images/image-avatar.jpg" alt="Avatar" />
+              <div class="user-info ticket-reveal">
+                <h3></h3>
+                <div>
+                  <img
+                    src="assets/images/icon-github.svg"
+                    alt=""
+                    class="github-icon"
+                  />
+                  <p></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ticket__num ticket-reveal">
+            <p id="random-num"></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="attribution">
+      Challenge by
+      <a href="https://www.frontendmentor.io?ref=challenge">Frontend Mentor</a>.
+      Coded by
+      <a href="https://github.com/FedeLearnsToCode">FedeLearnsToCode</a>.
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
