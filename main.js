@@ -23,20 +23,54 @@ const completedTicketSection = document.querySelector('.completed-ticket-section
 const userName = document.querySelector('.user-info h3');
 const userGitHub = document.querySelector('.user-info p');
 const randomTicketNum = document.getElementById('random-num');
-
+const resetBtn = document.getElementById('reset-btn');
 
 let isImageValid = false;
 let isNameValid = false;
 let isEmailValid = false;
 let isGitHubValid = false;
 generateTicketBtn.disabled = true;
+let previousObjectURL = null;
 
 // FUNCTIONS 
 function toggleSubmitButton() {
   generateTicketBtn.disabled = !(isNameValid && isEmailValid && isGitHubValid && isImageValid);
 }
 
-// ADD EVENT LISTENER
+function validateFile(file) {
+  if (!file.type.startsWith('image/')) {
+    errorMsg.textContent = 'Please upload an image file.';
+    return false;
+  }
+  if (file.size > 500 * 1024) {
+    errorMsg.textContent = 'File too large. Please upload a photo under 500KB.';
+    return false;
+  }
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    errorMsg.textContent = 'File format not supported. Only JPG, PNG or WEBP allowed.';
+    return false;
+  }
+  return true;
+}
+
+function showImage(file) {
+  uploadWrapper.classList.add('hide');
+  uploadedWrapper.classList.remove('hide');
+
+  if (previousObjectURL) {
+    URL.revokeObjectURL(previousObjectURL);
+  }
+  const tempURL = URL.createObjectURL(file);
+  previousObjectURL = tempURL;
+
+  avatarUploaded.src = tempURL;
+  const userDataImg = document.querySelector('.user-data img')
+  if (userDataImg) {
+    userDataImg.src = tempURL;
+  }
+}
+
+// EVENT LISTENERS
 customUpload.addEventListener('click', () => {
   fileInput.click();
 });
@@ -48,91 +82,106 @@ uploadWrapper.addEventListener('keydown', (e) => {
   }
 });
 
-// Upload control - size and format
-fileInput.addEventListener('change', () => {
+uploadWrapper.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  uploadWrapper.classList.add('dragover');
+});
+
+uploadWrapper.addEventListener('dragleave', () => {
+  uploadWrapper.classList.remove('dragover');
+});
+
+uploadWrapper.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadWrapper.classList.remove('dragover');
+
+  const files = e.dataTransfer.files;
+  if (files.length) {
+    const file = files[0];
+    uploadInfoMsg.classList.add('hide');
+    if (validateFile(file)) {
+      errorWrapper.classList.add('hide');
+      fileInput.files = files;
+      showImage(file);
+      isImageValid = true;
+    } else {
+      errorWrapper.classList.remove('hide');
+      fileInput.value = '';
+      isImageValid = false;
+    }
+    toggleSubmitButton();
+  }
+});
+
+fileInput.addEventListener('change', (e) => {
   uploadInfoMsg.classList.remove('hide');
   errorWrapper.classList.add('hide');
 
   const file = fileInput.files[0];
-  if(!file) return;
+  if (!file) return;
 
-  if (file.size > (500*1024)) {
+  if (validateFile(file)) {
+    showImage(file);
+    isImageValid = true;
+  } else {
     uploadInfoMsg.classList.add('hide');
     errorWrapper.classList.remove('hide');
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      errorMsg.textContent = 'File format not supported. Only JPG, PNG or WEBP allowed.';
+    } else if (file.size > 500 * 1024) {
+      errorMsg.textContent = 'File too large. Please upload a photo under 500KB.';
+    }
     fileInput.value = '';
     isImageValid = false;
-    toggleSubmitButton();
-    return;
-  };
-
-  if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/webp') {
-    uploadInfoMsg.classList.add('hide');
-    errorMsg.textContent = 'File format not supported. Only JPG, PNG or WEBP allowed.'
-    errorWrapper.classList.remove('hide');
-    fileInput.value = '';
-    isImageValid = false;
-    toggleSubmitButton();
-    return;
-  };
-
-  // If file is valid...
-  uploadWrapper.classList.add('hide');
-  uploadedWrapper.classList.remove('hide');
-    // Show img
-  const tempURL = URL.createObjectURL(file);
-  avatarUploaded.src = tempURL;
-
-  isImageValid = true;
+  }
   toggleSubmitButton();
-  
-  // Print ticket
-  document.querySelector('.user-data img').src = tempURL;
-
-  avatarUploaded.onload = () => {
-    URL.revokeObjectURL(tempURL);
-  };
 });
 
-// Remove image button
 removeImgBtn.addEventListener('click', () => {
   fileInput.value = '';
   uploadedWrapper.classList.add('hide');
   uploadWrapper.classList.remove('hide');
   isImageValid = false;
   toggleSubmitButton();
+
+  if (previousObjectURL) {
+    URL.revokeObjectURL(previousObjectURL);
+    previousObjectURL = null;
+  }
+
+  avatarUploaded.src = ''; 
+  document.querySelector('.user-data img').src = ''; 
 });
 
-// Change image button
 changeImgBtn.addEventListener('click', () => {
   fileInput.click();
 });
 
-// Full name input controls
+// Name input validation and formatting
 inputName.addEventListener('blur', () => {
   const cleanedName = inputName.value.trim().replace(/\s+/g, ' ');
   const words = cleanedName.split(' ');
-  
-  // First and last name
+
   if (words.length !== 2) {
     nameErrorMsg.classList.remove('hide');
     inputName.classList.add('error');
     isNameValid = false;
     toggleSubmitButton();
     return;
-  };
-  // No numbers or special characters
+  }
   const nameRegex = /^[A-Za-zÀ-ÿ'’\- ]+$/;
   if (!nameRegex.test(cleanedName)) {
     nameErrorMsg.classList.remove('hide');
     inputName.classList.add('error');
-    nameErrorPar.textContent = 'Numbers or special characters are not allowed.'
+    nameErrorPar.textContent = 'Numbers or special characters are not allowed.';
     isNameValid = false;
     toggleSubmitButton();
     return;
   }
-   // Formatted name
   nameErrorMsg.classList.add('hide');
   inputName.classList.remove('error');
+
   const firstName = words[0].charAt(0).toUpperCase() + words[0].slice(1).toLowerCase();
   const secondName = words[1].charAt(0).toUpperCase() + words[1].slice(1).toLowerCase();
 
@@ -141,54 +190,51 @@ inputName.addEventListener('blur', () => {
   isNameValid = true;
   toggleSubmitButton();
 
-  // Print ticket
-  document.querySelector('.print-name1').textContent = firstName; 
-  document.querySelector('.print-name2').textContent = ' ' + secondName; 
+  document.querySelector('.print-name1').textContent = firstName;
+  document.querySelector('.print-name2').textContent = ' ' + secondName;
   userName.textContent = inputName.value;
 });
 
-//Email input controls
+// Email input validation
 inputEmail.addEventListener('blur', () => {
   const cleanedEmail = inputEmail.value.trim();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  
+
   if (!emailRegex.test(cleanedEmail)) {
     emailErrorMsg.classList.remove('hide');
     inputEmail.classList.add('error');
     isEmailValid = false;
     toggleSubmitButton();
     return;
-  } else {
-    emailErrorMsg.classList.add('hide');
-    inputEmail.classList.remove('error');
-    isEmailValid = true;
-    toggleSubmitButton();
-    // Print ticket
-    document.querySelector('.print-email').textContent = cleanedEmail;
-  };
+  }
+  emailErrorMsg.classList.add('hide');
+  inputEmail.classList.remove('error');
+  isEmailValid = true;
+  toggleSubmitButton();
+
+  document.querySelector('.print-email').textContent = cleanedEmail;
 });
 
-//GitHub input controls 
+// GitHub input validation
 inputGitHub.addEventListener('input', () => {
-    const cleanedGit = inputGitHub.value.replace(/\s+/g, '');
+  const cleanedGit = inputGitHub.value.replace(/\s+/g, '');
 
-    if(!cleanedGit || cleanedGit[0] !== '@') {
-      gitHubErrorMsg.classList.remove('hide');
-      inputGitHub.classList.add('error');
-      isGitHubValid = false;
-      toggleSubmitButton();
-      return;
-    } else {
-      gitHubErrorMsg.classList.add('hide');
-      inputGitHub.classList.remove('error');
-      isGitHubValid = true;
-      toggleSubmitButton();
-      // Print ticket
-      userGitHub.textContent = cleanedGit;
-    };
+  if (!cleanedGit || cleanedGit[0] !== '@') {
+    gitHubErrorMsg.classList.remove('hide');
+    inputGitHub.classList.add('error');
+    isGitHubValid = false;
+    toggleSubmitButton();
+    return;
+  }
+  gitHubErrorMsg.classList.add('hide');
+  inputGitHub.classList.remove('error');
+  isGitHubValid = true;
+  toggleSubmitButton();
+
+  userGitHub.textContent = cleanedGit;
 });
 
-// Sumbit controls 
+// Form submit
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const file = fileInput.files[0];
@@ -202,19 +248,31 @@ form.addEventListener('submit', (e) => {
   inputFormSection.classList.add('hide');
   completedTicketSection.classList.remove('hide');
 
-  //Print random number
   const random = Math.floor(10000 + Math.random() * 90000);
   randomTicketNum.textContent = `#${random}`;
+});
+
+resetBtn.addEventListener('click', () => {
+  if (previousObjectURL) {
+    URL.revokeObjectURL(previousObjectURL);
+    previousObjectURL = null;
+  }
 
   form.reset();
-  uploadedWrapper.classList.add('hide');
-  uploadWrapper.classList.remove('hide');
+  avatarUploaded.src = '';
+  document.querySelector('.user-data img').src = '';
+  const ticketAvatarImg = completedTicketSection.querySelector('.ticket-avatar-img');
+  if (ticketAvatarImg) ticketAvatarImg.src = '';
+
   isImageValid = false;
   isNameValid = false;
   isEmailValid = false;
   isGitHubValid = false;
   generateTicketBtn.disabled = true;
+  uploadedWrapper.classList.add('hide');
+  uploadWrapper.classList.remove('hide');
+  inputFormSection.classList.remove('hide');
+  completedTicketSection.classList.add('hide');
 });
 
-
-
+  

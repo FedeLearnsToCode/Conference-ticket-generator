@@ -113,6 +113,7 @@ h2{
 form {
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 label {
@@ -138,13 +139,15 @@ label {
     text-align: center;
     padding: var(--spacing-xs); 
     cursor: pointer;
+    width: 100%; 
+    overflow: hidden;
 }
 
 .upload-wrapper p {
     font-size: var(--fs-s);
 }
 
-.upload-wrapper, .text-input, #generate-ticket-btn{
+.upload-wrapper, .text-input, .orange-btn {
     border-radius: var(--border-radius-label);
     font-family: var(--font-main);
     font-size: var(--fs-base);
@@ -174,13 +177,14 @@ label {
 .avatar {
     width: 110%;
     height: 110%;
+    object-fit: cover; 
+    display: block;
 }
 
 .upload-btn-wrapper {
     display: flex;
     gap: var(--spacing-xs);
     margin-bottom: var(--spacing-xs);
-
 }
 
 .upload-btn-wrapper button {
@@ -238,7 +242,7 @@ label {
     font-size: var(--fs-base);
 }
 
-#generate-ticket-btn {
+.orange-btn {
     background: var(--orange-500);
     color: var(--neutral-900);
     border: none;
@@ -250,7 +254,7 @@ label {
     cursor: pointer;
 }
 
-#generate-ticket-btn:hover {
+#orange-btn:hover {
     background: var(--orange-700);
 }
 
@@ -258,6 +262,9 @@ label {
 @media screen and (min-width: 48em) {
     body{
         background-size: 30%, 70%, 100%, cover;
+    }
+    form {
+        width: 50%;
     }
 }
 
@@ -482,6 +489,13 @@ label {
 }
 
 /* ==================== ANIMATIONS ==================== */
+#upload-wrapper.dragover {
+  border: 2px dashed var(--neutral-500);
+  background-color: var(--neutral-500);
+  border-radius: var(--border-radius-label);
+  cursor: copy;
+}
+
 .ticket-reveal > * {
     opacity: 0;
     animation: typeLine 0.5s ease-out forwards;
@@ -489,7 +503,6 @@ label {
 
 .ticket-reveal:nth-of-type(1) { animation-delay: 0.8s; }
 .ticket-reveal:nth-of-type(2) { animation-delay: 1.2s;}
-
 
 @keyframes typeLine {
   from {

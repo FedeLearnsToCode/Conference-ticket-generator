@@ -39,7 +39,7 @@ Users should be able to:
 
 ### Links
 
-Live Site URL: ([https://your-live-site-url.com](https://fedelearnstocode.github.io/Conference-ticket-generator/))
+Live Site URL: [Add live site URL here](https://your-live-site-url.com)
 
 ## My process
 
@@ -55,6 +55,7 @@ Live Site URL: ([https://your-live-site-url.com](https://fedelearnstocode.github
 
 - Avatar upload (with preview)
 - Form validation (avatar, full name, email, GitHub username)
+- Drag & drop file support with visual feedback
 - Ticket generation with animation and user data
 - Basic accessibility (focus, ARIA, keyboard)
 - Responsive design for mobile, tablet, and desktop
